@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  minecraft:
+    build:
+      context: ../..
+      dockerfile: docker.d/dockerfiles/Dockerfile-minecraft
+    container_name: ${COMPOSE_PROJECT_NAME}-minecraft
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    volumes:
+      - "$PWD/run/minecraft:/data"
+    environment:
+      EULA: "TRUE"
+      ENABLE_AUTOPAUSE: "TRUE"
+      OVERRIDE_SERVER_PROPERTIES: "TRUE"
+      MAX_TICK_TIME: "-1"
+      SERVER_PORT: ${SERVER_PORT}
+      MOTD: ${SERVER_NAME}
+      MEMORY: ${RAM_MEMORY}
+    restart: always
+    # needs to be reworked
+    #labels:
+    #  - "traefik.enable=true"
+    #  - "traefik.docker.network=default"
+    #  - "traefik.tcp.routers.minecraft-tcp.rule=HostSNI(`${DOMAIN}`)"
+    #  - "traefik.tcp.routers.minecraft-tcp.entrypoints=minecraft-tcp"
+    #  - "traefik.tcp.services.minecraft-tcp.loadbalancer.server.port=${SERVER_PORT}"
+    #  - "traefik.udp.routers.minecraft-udp.entrypoints=minecraft-udp"
+    #  - "traefik.udp.services.minecraft-udp.loadbalancer.server.port=${SERVER_PORT}"
+
+networks:
+  default:
+    external:
+      name: public-vlan
